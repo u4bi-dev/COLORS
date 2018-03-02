@@ -12,7 +12,7 @@ const COLORS = (rootElement = document.body, properties ) => {
             aspect : rootElement.clientWidth / rootElement.clientHeight,
             near   : 1,
             far    : 10000,
-            position : { x : 0, y : 0, z : 2000 },
+            position : { x : 0, y : 0, z : 1100 },
             rotation : { x : 0, y : 0, z : 0 }
         },
         scene : {
@@ -25,6 +25,13 @@ const COLORS = (rootElement = document.body, properties ) => {
     ( (prop) => {
 
         console.log('constructor', prop);
+
+        Object.assign(prop, prop, {
+            mouseX : 0,
+            mouseY : 0,
+            halfX : prop.renderer.width / 2,
+            halfY : prop.renderer.height / 2
+        });
 
     }) (properties);
 
@@ -96,15 +103,26 @@ const COLORS = (rootElement = document.body, properties ) => {
             /* Event
             ------------------------------------------------------------- */
             window.addEventListener('resize', () => {
-                let w = e.rootElement.clientWidth,
-                    h = e.rootElement.clientHeight;
+                let { rootElement, camera, renderer, _properties } = e,
+                    w = rootElement.clientWidth,
+                    h = rootElement.clientHeight;
 
-                e.camera.aspect = w / h;
-                e.camera.updateProjectionMatrix();
+                _properties.halfX           = w / 2;
+                _properties.halfY           = h / 2;
+                _properties.renderer.aspect = w / h;
 
-                e.renderer.webgl.setSize(w, h);
-                e.renderer.css3d.setSize(w, h);
+                camera.aspect = _properties.renderer.aspect;
+                camera.updateProjectionMatrix();
 
+                renderer.webgl.setSize(w, h);
+                renderer.css3d.setSize(w, h);
+
+            });
+
+            window.addEventListener('mousemove', event => {
+
+                e._properties.mouseX = (event.clientX - e._properties.halfX );
+                e._properties.mouseY = (event.clientY - e._properties.halfY) * 0.2;
             });
 
 
@@ -124,6 +142,9 @@ const COLORS = (rootElement = document.body, properties ) => {
                 TWEEN.update(time);
 
                 e.camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+                e.camera.position.x += ( e._properties.mouseX - e.camera.position.x) * 0.15;
+                e.camera.position.y += (-e._properties.mouseY - e.camera.position.y) * 0.15;
 
                 e.renderer.webgl.render(e.scene.webgl, e.camera);
                 e.renderer.css3d.render(e.scene.css3d, e.camera);
@@ -145,7 +166,7 @@ const COLORS = (rootElement = document.body, properties ) => {
 
             element.innerHTML = opts.innerHTML || '';
 
-            let mesh      = new THREE.Mesh( new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ opacity : 0.0, side : THREE.DoubleSide }) ),
+            let mesh      = new THREE.Mesh( new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: 0x000000, opacity : 0.0, side : THREE.DoubleSide }) ),
                 element3D = new THREE.CSS3DObject(element);
 
             return {
@@ -186,7 +207,7 @@ const COLORS = (rootElement = document.body, properties ) => {
                 setScale : function(x, y, z) {
                     this.webgl.scale.set(x, y, z);
                     this.css3d.scale.set(x, y, z);
-                },
+                }
             };
         }
     });
