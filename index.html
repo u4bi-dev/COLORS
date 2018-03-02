@@ -28,11 +28,20 @@
 
             var app  = COLORS(document.getElementById('app')),
                 axes = new THREE.AxesHelper(500),
-                el3D = app.createElement3D({ 
+                host = app.createElement3D({ 
                             style : { 
-                                backgroundColor : 'rgba(0, 0, 0, 0.1)'
+                                width : '780px',
+                                height: '358px',
                             },
-                            innerHTML : `<h1>exam</h1>`
+                            innerHTML : `<div id="ytplayer_host"></div>`
+                        }),
+                reflection = app.createElement3D({ 
+                            style : { 
+                                width : '780px',
+                                height: '358px',
+                                opacity : '0.3',
+                            },
+                            innerHTML : `<div id="ytplayer_reflection"></div>`
                         }),
                 anim = new TWEEN.Tween(axes.position)
                                 .to({ y : 240 }, 5000)
@@ -51,28 +60,25 @@
 
 
             app.initialize( e => {
+                anim.start();
 
                 e.scene.webgl.add(axes);
+                app.scene.add(host);
+                app.scene.add(reflection);
 
-                anim.start();
-                
-                app.scene.add(el3D);
+                host.setPosition(0, 0, -100);
+
+                reflection.setPosition(0, -350, -100);
+                reflection.rotateX(Math.PI);
             });
 
 
 
             app.animate( e => {
-                let T = .1,
-                    D = 5;
 
-                axes.rotateX(T);
-                axes.rotateY(T);
-
-                el3D.rotateX(T / D);
-                el3D.rotateY(T / D);
             });
 
-
-        </script>
+        </script>  
+        <script src="youtube.js"></script>        
 	</body>
 </html>
