@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+        <title>COLORS</title>
+        <script src="vendor/three.min.js"></script>
+        <script src="vendor/tween.min.js"></script>
+        <script src="vendor/CSS3DRenderer.js"></script>
+		<style>
+			body { 
+                margin   : 0;
+                overflow : hidden;
+            }
+            #app {
+                position : absolute;
+                width    : 100%;
+                height   : 100%;
+            }
+
+            .example {
+                width: 500px;
+                height: 500px;
+                background: rgba(0, 0, 0, 0.1);
+            }
+		</style>
+	</head>
+	<body>
+            
+        <div class="example">
+            <h1>exam</h1>
+        </div>
+
+
+        <div id="app"></div>
+
+        <script src="app.js"></script>
+        <script>
+
+            var app  = COLORS(document.getElementById('app')),
+                axes = new THREE.AxesHelper(500),
+                elem = new THREE.CSS3DObject(document.querySelector('.example')),
+                mesh = new THREE.Mesh(new THREE.PlaneGeometry(500, 500), new THREE.MeshBasicMaterial({ opacity : 0.0, side : THREE.DoubleSide })),
+                anim = new TWEEN.Tween(axes.position)
+                                .to({ y : 240 }, 5000)
+                                .easing(TWEEN.Easing.Quadratic.Out)
+                                .onUpdate( function() {
+                                    // console.log(this);
+                                })
+                                .onComplete( function() {
+                                    console.log('success', this);
+                                });
+
+
+
+            console.log('COLORS', app);
+
+
+
+            app.initialize( e => {
+
+                e.scene.webgl.add(axes);
+
+                elem.position.set(0, 0, -100);
+                e.scene.css3d.add(elem);
+
+                mesh.position.set(0, 0, -100);
+                e.scene.webgl.add(mesh);
+                
+                anim.start();
+            });
+
+
+
+            app.animate( e => {
+                let T = .1,
+                    D = 5;
+
+                axes.rotateX(T);
+                axes.rotateY(T);
+
+                elem.rotateX(T / D);
+                elem.rotateY(T / D);
+
+                mesh.rotateX(T / D);
+                mesh.rotateY(T / D);
+            });
+
+
+        </script>
+	</body>
+</html>
