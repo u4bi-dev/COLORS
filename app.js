@@ -40,7 +40,14 @@ const COLORS = (rootElement = document.body, properties ) => {
         },
         scene : {
             webgl : new THREE.Scene(),
-            css3d : new THREE.Scene()
+            css3d : new THREE.Scene(),
+            add : function(element3D) {
+                let e = this,
+                    { webgl, css3d } = e;
+
+                webgl.add(element3D.webgl);
+                css3d.add(element3D.css3d);
+            }
         },
         _properties : properties,
         initialize : function(callback = null) {
