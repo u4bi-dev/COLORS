@@ -27,7 +27,6 @@
         <script>
 
             var app  = COLORS(document.getElementById('app')),
-                axes = new THREE.AxesHelper(500),
                 host = app.createElement3D({ 
                             style : { 
                                 width : '780px',
@@ -42,16 +41,7 @@
                                 opacity : '0.3',
                             },
                             innerHTML : `<div id="ytplayer_reflection"></div>`
-                        }),
-                anim = new TWEEN.Tween(axes.position)
-                                .to({ y : 240 }, 5000)
-                                .easing(TWEEN.Easing.Quadratic.Out)
-                                .onUpdate( function() {
-                                    // console.log(this);
-                                })
-                                .onComplete( function() {
-                                    console.log('success', this);
-                                });
+                        });
 
 
 
@@ -59,10 +49,17 @@
 
 
 
-            app.initialize( e => {
-                anim.start();
+            app.track.add('intro', new TWEEN.Tween(app.camera.position).to( { z : 1100 }, 2000).easing(TWEEN.Easing.Quadratic.Out)
+                                            .onComplete( function() {
+                                                console.log('success', this);
+                                            })
+                                            .delay(3000));
 
-                e.scene.webgl.add(axes);
+            app.initialize( e => {
+
+                app.track.start('intro');
+
+
                 app.scene.add(host);
                 app.scene.add(reflection);
 

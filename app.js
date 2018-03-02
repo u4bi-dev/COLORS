@@ -12,7 +12,7 @@ const COLORS = (rootElement = document.body, properties ) => {
             aspect : rootElement.clientWidth / rootElement.clientHeight,
             near   : 1,
             far    : 10000,
-            position : { x : 0, y : 0, z : 1100 },
+            position : { x : 0, y : 0, z : 3200 },
             rotation : { x : 0, y : 0, z : 0 }
         },
         scene : {
@@ -54,6 +54,17 @@ const COLORS = (rootElement = document.body, properties ) => {
 
                 webgl.add(element3D.webgl);
                 css3d.add(element3D.css3d);
+            }
+        },
+        track : {
+            type : '',
+            animations : {},
+            add : function(type, animation) {
+                this.animations[type] = animation;
+            },
+            start : function(type) {
+                this.type = type;
+                this.animations[type].start();
             }
         },
         _properties : properties,
