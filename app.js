@@ -125,6 +125,26 @@ const COLORS = (rootElement = document.body, properties ) => {
 
             })()();
 
+        },
+        createElement3D : ( opts = {}, element = document.createElement('div')) => {
+            
+            opts.style = opts.style || {};
+
+            let w = parseInt( ( opts.style.width  = opts.style.width  || '500px') ),
+                h = parseInt( ( opts.style.height = opts.style.height || '500px') );
+
+
+            Object.assign(element.style, element.style, { ...opts.style || undefined });
+
+            element.innerHTML = opts.innerHTML || '';
+
+            let mesh      = new THREE.Mesh( new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ opacity : 0.0, side : THREE.DoubleSide }) ),
+                element3D = new THREE.CSS3DObject(element);
+
+            return {
+                webgl : mesh,
+                css3d : element3D
+            };
         }
     });
 
