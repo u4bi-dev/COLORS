@@ -150,7 +150,43 @@ const COLORS = (rootElement = document.body, properties ) => {
 
             return {
                 webgl : mesh,
-                css3d : element3D
+                css3d : element3D,
+                translateX : function(distance) {
+                    this.webgl.translateX(distance);
+                    this.css3d.translateX(distance);
+                },
+                translateY : function(distance) {
+                    this.webgl.translateY(distance);
+                    this.css3d.translateY(distance);
+                },
+                translateZ : function(distance) {
+                    this.webgl.translateZ(distance);
+                    this.css3d.translateZ(distance);
+                },
+                rotateX : function(radians) {
+                    this.webgl.rotateX(radians);
+                    this.css3d.rotateX(radians);
+                },
+                rotateY : function(radians) {
+                    this.webgl.rotateY(radians);
+                    this.css3d.rotateY(radians);
+                },
+                rotateZ : function(radians) {
+                    this.webgl.rotateZ(radians);
+                    this.css3d.rotateZ(radians);
+                },
+                setPosition : function(x, y, z) {
+                    this.webgl.position.set(x, y, z);
+                    this.css3d.position.set(x, y, z);
+                },
+                setRotation : function(x, y, z) {
+                    this.webgl.rotation.set(x, y, z);
+                    this.css3d.rotation.set(x, y, z);
+                },
+                setScale : function(x, y, z) {
+                    this.webgl.scale.set(x, y, z);
+                    this.css3d.scale.set(x, y, z);
+                },
             };
         }
     });
