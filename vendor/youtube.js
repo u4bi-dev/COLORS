@@ -68,6 +68,15 @@ var _youtube = {
                 ...this.items[this.playlist.itemCount],
                 image : `https://i.ytimg.com/vi/${ this.items[this.playlist.itemCount].videoId }/maxresdefault.jpg`
             }
+        },
+        hideAds : function() {
+            let time = this.reflection.getMediaReferenceTime();
+
+            this.reflection.stopVideo();
+            this.host.stopVideo();
+
+            this.reflection.seekTo(time);
+            this.host.seekTo(time);
         }
     };
 
@@ -119,11 +128,10 @@ function onYouTubePlayerAPIReady() {
                                 _youtube.host.unMute();
                                 _youtube.reflection.pauseVideo();
 
-                                _youtube.reflection.seekTo(_youtube.reflection.getMediaReferenceTime());
-                                _youtube.host.seekTo(_youtube.reflection.getMediaReferenceTime());
+                                _youtube.reflection.seekTo(_youtube.host.getMediaReferenceTime());
+                                _youtube.host.seekTo(_youtube.host.getMediaReferenceTime());
 
                                 _youtube.reflection.playVideo();
-                                _youtube.host.playVideo();
                             }
                             break;
                         default : break;
