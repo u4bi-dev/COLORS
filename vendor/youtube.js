@@ -4,6 +4,7 @@ var _youtube = {
             host : 'ytplayer_host',
             reflection : 'ytplayer_reflection'
         },
+        nextDirection : 1, // 0 left , 1 right
         host : null,
         reflection : null,
         _syncFlag : false,
@@ -11,7 +12,7 @@ var _youtube = {
         channelId : 'UC2Qw1dzXDBAZPwS7zm37g8g',
         playlist : {
             count : 4,
-            itemCount : 0,
+            itemCount : 53,
             data : []
         },
         items : [],
@@ -55,9 +56,11 @@ var _youtube = {
         },
         next : function() {
             this.load( (this.playlist.itemCount + 1) > this.items.length ? this.playlist.itemCount : this.playlist.itemCount + 1);
+            this.nextDirection = 1;
         },
         prev : function() {
             this.load(this.playlist.itemCount - 1 < 0 ? this.playlist.itemCount : this.playlist.itemCount - 1);
+            this.nextDirection = 0;
         },
         getCurrent : function() {
             return {
@@ -90,7 +93,7 @@ fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${
 function onYouTubePlayerAPIReady() {
     console.log('initialize for youtube', _youtube.items.length);
 
-    let videoId = _youtube.items[_youtube.playlist.itemCount = Math.floor( Math.random() * (_youtube.items.length - 0) )].videoId;
+    let videoId = _youtube.items[!_youtube.playlist.itemCount ? _youtube.playlist.itemCount = Math.floor( Math.random() * (_youtube.items.length - 0) ) : _youtube.playlist.itemCount].videoId;
 
     Object.assign(_youtube, _youtube, {
         host : new YT.Player(_youtube.elementId.host, {
@@ -98,10 +101,7 @@ function onYouTubePlayerAPIReady() {
             videoId: videoId,
             playerVars: { 'autoplay': 1, 'controls': 0 },
             events: {
-                onReady : e => _youtube.host.mute(),
-                onStateChange : e => {
-                    if(e.data === 1 && !_youtube._syncFlag) _youtube.host.pauseVideo();
-                }
+                onReady : e => _youtube.host.mute()
             }
         }),
         reflection : new YT.Player(_youtube.elementId.reflection, {
@@ -111,14 +111,22 @@ function onYouTubePlayerAPIReady() {
             events: {
                 onReady : e => _youtube.reflection.mute(),
                 onStateChange : e => {
-                    if(e.data === 1 && !_youtube._syncFlag) {
-                        _youtube._syncFlag = true;
-                        _youtube.host.unMute();
+                    switch(e.data){
+                        case 0 : return  _youtube.getCurrent().count + 1 < _youtube.items.length ? ( _youtube.nextDirection ? _youtube.next() : _youtube.prev() ) : ( _youtube.nextDirection ? _youtube.load(0) : _youtube.load(_youtube.items.length - 1) );
+                        case 1 :
+                            if(!_youtube._syncFlag) {
+                                _youtube._syncFlag = true;
+                                _youtube.host.unMute();
+                                _youtube.reflection.pauseVideo();
 
-                        _youtube.reflection.seekTo(_youtube.reflection.getMediaReferenceTime());
-                        _youtube.host.seekTo(_youtube.reflection.getMediaReferenceTime());
-                        _youtube.reflection.playVideo();
-                        _youtube.host.playVideo();
+                                _youtube.reflection.seekTo(_youtube.reflection.getMediaReferenceTime());
+                                _youtube.host.seekTo(_youtube.reflection.getMediaReferenceTime());
+
+                                _youtube.reflection.playVideo();
+                                _youtube.host.playVideo();
+                            }
+                            break;
+                        default : break;
                     }
                 }
             }

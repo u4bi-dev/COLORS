@@ -16,15 +16,43 @@
                 width    : 100%;
                 height   : 100%;
             }
+
+            .Icon_Button {
+                background-color: white;
+                border-radius: 3.6rem;
+                cursor: pointer;
+                display: inline-block;
+                font-size: 2.0rem;
+                line-height: 3.6rem;
+                margin: 0 5px;
+                text-align: center;
+                width: 3.6rem;
+                height: 3.6rem;
+                -webkit-user-select: none;
+                        user-select: none;
+                position: absolute;
+                bottom: 4rem;
+                z-index: 1;
+                color : #4a4a4a;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.24), 0 0 5px rgba(0, 0, 0, 0.12);
+            }
+            .Button_Left { left: 1rem; }
+            .Button_Right { right: 1rem; }
+
 		</style>
 	</head>
 	<body>
+        <div class="Icon_Button Button_Left"> < </div>
+        <div class="Icon_Button Button_Right"> > </div>
+
 
         <div id="app"></div>
 
 
         <script src="app.js"></script>
         <script>
+            document.querySelector('.Button_Left').onclick = () => _youtube.prev();
+            document.querySelector('.Button_Right').onclick = () => _youtube.next();
 
             var app  = COLORS(document.getElementById('app')),
                 host = app.createElement3D({ 
@@ -36,14 +64,14 @@
                             innerHTML : `<div id="ytplayer_host"></div>`
                         }),
                 reflection = app.createElement3D({ 
-                            style : { 
-                                width : '780px',
-                                height: '358px',
-                                opacity : '0.3',
-                                backgroundColor : '#1f1f1f'
-                            },
-                            innerHTML : `<div id="ytplayer_reflection"></div>`
-                        });
+                                style : { 
+                                    width : '780px',
+                                    height: '358px',
+                                    opacity : '0.3',
+                                    backgroundColor : '#1f1f1f'
+                                },
+                                innerHTML : `<div id="ytplayer_reflection"></div>`
+                            });
 
 
 
