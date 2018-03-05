@@ -130,32 +130,36 @@ const COLORS = (rootElement = document.body, properties ) => {
 
             });
 
-            window.addEventListener('mousemove', event => {
 
-                e._properties.mouseX = (event.clientX - e._properties.halfX );
-                e._properties.mouseY = (event.clientY - e._properties.halfY) * 0.2;
-            });
+            let move = (event, touchX) => {
+                    e._properties.mouseX = (event.clientX - e._properties.halfX );
+                    touchX && [ e._properties.mouseX *= touchX ];
+
+                    e._properties.mouseY = (event.clientY - e._properties.halfY) * 0.2;
+                },
+                click = (event) => {
+                    let { rootElement, camera, scene } = e,
+                        pointer = {
+                            x :  (event.clientX / rootElement.clientWidth ) * 2 - 1,
+                            y : -(event.clientY / rootElement.clientHeight) * 2 + 1
+                        },
+                        raycaster = new THREE.Raycaster(),
+                        intersect = null;
+
+                    raycaster.setFromCamera(pointer, camera);
+                    intersect = raycaster.intersectObjects(scene.webgl.children)[0];
+
+                    intersect && window.dispatchEvent(new CustomEvent('raycaster', {
+                        detail : { ...intersect }
+                    }));
+
+                };
 
 
-            window.addEventListener('mousedown', event => {
-                event.preventDefault();
-
-                let { rootElement, camera, scene } = e,
-                    pointer = {
-                        x :  (event.clientX / rootElement.clientWidth ) * 2 - 1,
-                        y : -(event.clientY / rootElement.clientHeight) * 2 + 1
-                    },
-                    raycaster = new THREE.Raycaster(),
-                    intersect = null;
-
-                raycaster.setFromCamera(pointer, camera);
-                intersect = raycaster.intersectObjects(scene.webgl.children)[0];
-
-                intersect && window.dispatchEvent(new CustomEvent('raycaster', {
-                    detail : { ...intersect }
-                }));
-
-            });
+            window.addEventListener('mousemove', move);
+            window.addEventListener('mouseup'  , click);
+            window.addEventListener('touchmove', event => move(event.changedTouches[0], 4));
+            window.addEventListener('touchend' , event => click(event.changedTouches[0]));
 
 
             /* USE
