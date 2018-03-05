@@ -137,6 +137,27 @@ const COLORS = (rootElement = document.body, properties ) => {
             });
 
 
+            window.addEventListener('mousedown', event => {
+                event.preventDefault();
+
+                let { rootElement, camera, scene } = e,
+                    pointer = {
+                        x :  (event.clientX / rootElement.clientWidth ) * 2 - 1,
+                        y : -(event.clientY / rootElement.clientHeight) * 2 + 1
+                    },
+                    raycaster = new THREE.Raycaster(),
+                    intersect = null;
+
+                raycaster.setFromCamera(pointer, camera);
+                intersect = raycaster.intersectObjects(scene.webgl.children)[0];
+
+                intersect && window.dispatchEvent(new CustomEvent('raycaster', {
+                    detail : { ...intersect }
+                }));
+
+            });
+
+
             /* USE
             ------------------------------------------------------------- */
             callback && callback(this);
@@ -218,6 +239,10 @@ const COLORS = (rootElement = document.body, properties ) => {
                 setScale : function(x, y, z) {
                     this.webgl.scale.set(x, y, z);
                     this.css3d.scale.set(x, y, z);
+                },
+                isIntersect : function(mesh) {
+
+                    return this.webgl === mesh;
                 }
             };
         }

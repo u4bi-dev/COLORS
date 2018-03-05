@@ -105,6 +105,14 @@
 
             });
 
+
+
+            window.addEventListener('raycaster', e => {
+
+                if (host.isIntersect(e.detail.object)) [ _youtube.hideAds(), console.log('intersect', e.detail) ]
+
+            });
+
         </script>
         <script src="vendor/youtube.js"></script>
 	</body>
