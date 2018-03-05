@@ -8,11 +8,12 @@ var _youtube = {
         host : null,
         reflection : null,
         _syncFlag : false,
+        isRandPlayer : false,
         accesskey : 'AIzaSyAUEd6XlWygeiKrvgJc4tV7jYRxw7DdaKM',
         channelId : 'UC2Qw1dzXDBAZPwS7zm37g8g',
         playlist : {
             count : 4,
-            itemCount : 53,
+            itemCount : 58,
             data : []
         },
         items : [],
@@ -77,6 +78,10 @@ var _youtube = {
 
             this.reflection.seekTo(time);
             this.host.seekTo(time);
+        },
+        getRandVideoCount : function() {
+
+            return this.playlist.itemCount = Math.floor( Math.random() * this.items.length )
         }
     };
 
@@ -102,7 +107,7 @@ fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${
 function onYouTubePlayerAPIReady() {
     console.log('initialize for youtube', _youtube.items.length);
 
-    let videoId = _youtube.items[!_youtube.playlist.itemCount ? _youtube.playlist.itemCount = Math.floor( Math.random() * (_youtube.items.length - 0) ) : _youtube.playlist.itemCount].videoId;
+    let videoId = _youtube.items[_youtube.isRandPlayer ? _youtube.getRandVideoCount() : _youtube.playlist.itemCount].videoId;
 
     Object.assign(_youtube, _youtube, {
         host : new YT.Player(_youtube.elementId.host, {
