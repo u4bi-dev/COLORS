@@ -57,7 +57,6 @@ const COLORS = (rootElement = document.body, properties ) => {
             }
         },
         track : {
-            type : '',
             animations : {},
             add : function(type, animation) {
                 this.animations[type] = animation;
@@ -208,6 +207,7 @@ const COLORS = (rootElement = document.body, properties ) => {
             return {
                 webgl : mesh,
                 css3d : element3D,
+                dataset : opts.dataset || {},
                 translateX : function(distance) {
                     this.webgl.translateX(distance);
                     this.css3d.translateX(distance);
@@ -254,9 +254,9 @@ const COLORS = (rootElement = document.body, properties ) => {
 
             let group = new THREE.Group();
 
-            for (var IX = 0; IX < x; IX++) {
+            for (let IX = 0; IX < x; IX++) {
 
-                for (var IY = 0; IY < y; IY++) {
+                for (let IY = 0; IY < y; IY++) {
 
                     let particle = new THREE.Sprite(new THREE.MeshBasicMaterial( { color : color } ));
 
@@ -275,17 +275,20 @@ const COLORS = (rootElement = document.body, properties ) => {
                 elements3D = [],
                 { createElement3D } = this;
 
-            for (var IX = 0; IX < x; IX++) {
+            for (let IY = y; IY--;) {
 
-                for (var IY = 0; IY < y; IY++) {
+                for (let IX = 0; IX < x; IX++) {
 
                     let element3D = createElement3D({
-                        style : {
-                            width : width,
-                            height: height
-                        },
-                        innerHTML : ` <img style="width:100%; height:100%;" src="${ items[tick] }">`
-                    });
+                            style : {
+                                width : width,
+                                height: height
+                            },
+                            dataset : {
+                                id : tick
+                            },
+                            innerHTML : ` <img style="width:100%; height:100%;" src="${ items[tick] }">`
+                        });
 
                     element3D.setPosition(
                         IX * marginX - ( (x * marginX) / 2 ),
