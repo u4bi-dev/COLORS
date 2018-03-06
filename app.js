@@ -66,6 +66,18 @@ const COLORS = (rootElement = document.body, properties ) => {
                 this.animations[type].start();
             }
         },
+        lookAt : {
+            position : {
+                x : 0,
+                y : 0,
+                z : 0
+            },
+            set : function(x, y, z) {
+                x && [ this.position.x = x]
+                y && [ this.position.y = y]
+                z && [ this.position.z = z]
+            }
+        },
         _properties : properties,
         initialize : function(callback = null) {
 
@@ -176,7 +188,7 @@ const COLORS = (rootElement = document.body, properties ) => {
                 requestAnimationFrame(render);
                 TWEEN.update(time);
 
-                e.camera.lookAt(new THREE.Vector3(0, 0, 0));
+                e.camera.lookAt(new THREE.Vector3().copy(e.lookAt.position));
 
                 e.camera.position.x += ( e._properties.mouseX - e.camera.position.x) * 0.15;
                 e.camera.position.y += (-e._properties.mouseY - e.camera.position.y) * 0.15;
