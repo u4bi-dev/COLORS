@@ -12,7 +12,7 @@ const COLORS = (rootElement = document.body, properties ) => {
             aspect : rootElement.clientWidth / rootElement.clientHeight,
             near   : 1,
             far    : 10000,
-            position : { x : 0, y : 0, z : 3200 },
+            position : { x : 0, y : 0, z : -12200 },
             rotation : { x : 0, y : 0, z : 0 }
         },
         scene : {
@@ -249,6 +249,57 @@ const COLORS = (rootElement = document.body, properties ) => {
                     return this.webgl === mesh;
                 }
             };
+        },
+        createPlane3D : (x, y, margin, color) => {
+
+            let group = new THREE.Group();
+
+            for (var IX = 0; IX < x; IX++) {
+
+                for (var IY = 0; IY < y; IY++) {
+
+                    let particle = new THREE.Sprite(new THREE.MeshBasicMaterial( { color : color } ));
+
+                    particle.position.set(IX * margin - ( (x * margin) / 2 ), -170, IY * margin - ( ( y * margin) / 2 ));
+                    particle.scale.x = particle.scale.y = 1.5;
+
+                    group.add(particle);
+                }
+
+            }
+
+            return group;
+        },
+        createThumbnail3D : function(x, y, width, height, marginX, marginY, depth, items) {
+            let tick = 0,
+                elements3D = [],
+                { createElement3D } = this;
+
+            for (var IX = 0; IX < x; IX++) {
+
+                for (var IY = 0; IY < y; IY++) {
+
+                    let element3D = createElement3D({
+                        style : {
+                            width : width,
+                            height: height
+                        },
+                        innerHTML : ` <img style="width:100%; height:100%;" src="${ items[tick] }">`
+                    });
+
+                    element3D.setPosition(
+                        IX * marginX - ( (x * marginX) / 2 ),
+                        IY * marginY + marginY,
+                        depth
+                    );
+
+                    elements3D.push(element3D);
+                    tick++;
+
+                }
+            }
+
+            return elements3D;
         }
     });
 

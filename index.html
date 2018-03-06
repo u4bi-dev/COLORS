@@ -7,8 +7,8 @@
         <script src="vendor/three.min.js"></script>
         <script src="vendor/tween.min.js"></script>
         <script src="vendor/CSS3DRenderer.js"></script>
-		<style>
-			body { 
+        <style>
+            body { 
                 margin   : 0;
                 overflow : hidden;
             }
@@ -98,6 +98,11 @@
 
                 reflection.setPosition(0, -350, -100);
                 reflection.rotateX(Math.PI);
+
+
+                app.scene.webgl.add( app.createPlane3D(10, 10, 160, 0x0808080));
+                window.addEventListener('onYoutubeAPIReady', _ => app.createThumbnail3D(20, 7, '200px', '200px', 300, 260, -3070, _youtube.items.map(e => e.image) ).forEach(e => app.scene.add(e) ));
+
             });
 
 

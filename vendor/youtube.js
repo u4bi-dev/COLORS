@@ -28,7 +28,8 @@ var _youtube = {
                                     videoId : e.snippet.resourceId.videoId,
                                     datetime : e.snippet.publishedAt,
                                     title : e.snippet.title,
-                                    description : e.snippet.description
+                                    description : e.snippet.description,
+                                    image : `https://i.ytimg.com/vi/${ e.snippet.resourceId.videoId }/mqdefault.jpg`
                                 });
                             });
 
@@ -66,8 +67,7 @@ var _youtube = {
         getCurrent : function() {
             return {
                 count : this.playlist.itemCount,
-                ...this.items[this.playlist.itemCount],
-                image : `https://i.ytimg.com/vi/${ this.items[this.playlist.itemCount].videoId }/maxresdefault.jpg`
+                ...this.items[this.playlist.itemCount]
             }
         },
         hideAds : function() {
@@ -145,5 +145,7 @@ function onYouTubePlayerAPIReady() {
             }
         }) 
     });
+
+    window.dispatchEvent(new Event('onYoutubeAPIReady'));
 
 }
