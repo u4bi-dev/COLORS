@@ -83,33 +83,33 @@ const COLORS = (rootElement = document.body, properties ) => {
 
             console.log('initialize', this);
             
-            let e = this,
-                { camera, renderer, scene } = e._properties;
+            let self = this,
+                { camera, renderer, scene, rootElement } = self;
 
 
             /* CAMERA
             ------------------------------------------------------------- */
-            let { position } = camera;
+            let { position } = self._properties.camera;
 
-            e.camera.position.set(position.x, position.y, position.z);
+            camera.position.set(position.x, position.y, position.z);
 
 
             /* RENDERER
             ------------------------------------------------------------- */
-            let { width, height, backgroundColor, backgroundAlpha } = renderer;
+            let { width, height, backgroundColor, backgroundAlpha } = self._properties.renderer;
 
             // WebGL
-            e.renderer.webgl.domElement.style.position = 'absolute';
-            e.renderer.webgl.domElement.style.zIndex   = 0;
-            e.renderer.webgl.domElement.style.top      = 0;
-            e.renderer.webgl.setSize(width, height);
-            e.renderer.webgl.setClearColor(backgroundColor, backgroundAlpha);
+            renderer.webgl.domElement.style.position = 'absolute';
+            renderer.webgl.domElement.style.zIndex   = 0;
+            renderer.webgl.domElement.style.top      = 0;
+            renderer.webgl.setSize(width, height);
+            renderer.webgl.setClearColor(backgroundColor, backgroundAlpha);
 
             // CSS3D
-            e.renderer.css3d.domElement.style.position = 'absolute';
-            e.renderer.css3d.domElement.style.zIndex   = 0;
-            e.renderer.css3d.domElement.style.top      = 0;
-            e.renderer.css3d.setSize(width, height);
+            renderer.css3d.domElement.style.position = 'absolute';
+            renderer.css3d.domElement.style.zIndex   = 0;
+            renderer.css3d.domElement.style.top      = 0;
+            renderer.css3d.setSize(width, height);
 
 
             /* SCENE
@@ -118,14 +118,14 @@ const COLORS = (rootElement = document.body, properties ) => {
 
             /* DOM Eleement
             ------------------------------------------------------------- */
-            e.rootElement.appendChild(e.renderer.css3d.domElement);
-            e.renderer.css3d.domElement.appendChild(e.renderer.webgl.domElement);
+            rootElement.appendChild(renderer.css3d.domElement);
+            renderer.css3d.domElement.appendChild(renderer.webgl.domElement);
 
 
             /* Event
             ------------------------------------------------------------- */
             window.addEventListener('resize', () => {
-                let { rootElement, camera, renderer, _properties } = e,
+                let { rootElement, camera, renderer, _properties } = self,
                     w = rootElement.clientWidth,
                     h = rootElement.clientHeight;
 
@@ -143,13 +143,15 @@ const COLORS = (rootElement = document.body, properties ) => {
 
 
             let move = (event, touchX) => {
-                    e._properties.mouseX = (event.clientX - e._properties.halfX );
-                    touchX && [ e._properties.mouseX *= touchX ];
+                    let { _properties } = self;
 
-                    e._properties.mouseY = (event.clientY - e._properties.halfY) * 0.2;
+                    _properties.mouseX = (event.clientX - _properties.halfX );
+                    touchX && [ _properties.mouseX *= touchX ];
+
+                    _properties.mouseY = (event.clientY - _properties.halfY) * 0.2;
                 },
-                click = (event) => {
-                    let { rootElement, camera, scene } = e,
+                click = event => {
+                    let { rootElement, camera, scene } = self,
                         pointer = {
                             x :  (event.clientX / rootElement.clientWidth ) * 2 - 1,
                             y : -(event.clientY / rootElement.clientHeight) * 2 + 1
@@ -169,8 +171,8 @@ const COLORS = (rootElement = document.body, properties ) => {
 
             window.addEventListener('mousemove', move);
             window.addEventListener('mouseup'  , click);
-            window.addEventListener('touchmove', event => move(event.changedTouches[0], 4));
-            window.addEventListener('touchend' , event => click(event.changedTouches[0]));
+            window.addEventListener('touchmove', e => move(e.changedTouches[0], 4));
+            window.addEventListener('touchend' , e => click(e.changedTouches[0]));
 
 
             /* USE
@@ -182,21 +184,21 @@ const COLORS = (rootElement = document.body, properties ) => {
 
             console.log('animate', this);
 
-            let e = this;
+            let { camera, renderer, scene, lookAt, _properties } = this;
 
             ( _ => render = time => {
                 requestAnimationFrame(render);
                 TWEEN.update(time);
 
-                e.camera.lookAt(new THREE.Vector3().copy(e.lookAt.position));
+                camera.lookAt(new THREE.Vector3().copy(lookAt.position));
 
-                e.camera.position.x += ( e._properties.mouseX - e.camera.position.x) * 0.15;
-                e.camera.position.y += (-e._properties.mouseY - e.camera.position.y) * 0.15;
+                camera.position.x += (- _properties.mouseX - camera.position.x) * 0.15;
+                camera.position.y += (  _properties.mouseY - camera.position.y) * 0.15;
 
-                e.renderer.webgl.render(e.scene.webgl, e.camera);
-                e.renderer.css3d.render(e.scene.css3d, e.camera);
+                renderer.webgl.render(scene.webgl, camera);
+                renderer.css3d.render(scene.css3d, camera);
 
-                callback && callback(e);
+                callback && callback(self);
 
             })()();
 
