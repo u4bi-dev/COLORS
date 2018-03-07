@@ -5,7 +5,12 @@ const COLORS = (rootElement = document.body, properties ) => {
             width           : rootElement.clientWidth,
             height          : rootElement.clientHeight,
             backgroundColor : 0xF0F0F0,
-            backgroundAlpha : 1
+            backgroundAlpha : 1,
+            domElementStyle : {
+                position : 'absolute',
+                zIndex   : 0,
+                top      : 0
+            }
         },
         camera : {
             fov    : 45,
@@ -57,6 +62,7 @@ const COLORS = (rootElement = document.body, properties ) => {
             }
         },
         track : {
+            type : '',
             animations : {},
             add : function(type, animation) {
                 this.animations[type] = animation;
@@ -73,9 +79,9 @@ const COLORS = (rootElement = document.body, properties ) => {
                 z : 0
             },
             set : function(x, y, z) {
-                x && [ this.position.x = x]
-                y && [ this.position.y = y]
-                z && [ this.position.z = z]
+                x !== undefined && [ this.position.x = x]
+                y !== undefined && [ this.position.y = y]
+                z !== undefined && [ this.position.z = z]
             }
         },
         _properties : properties,
@@ -96,19 +102,15 @@ const COLORS = (rootElement = document.body, properties ) => {
 
             /* RENDERER
             ------------------------------------------------------------- */
-            let { width, height, backgroundColor, backgroundAlpha } = self._properties.renderer;
+            let { width, height, backgroundColor, backgroundAlpha, domElementStyle } = self._properties.renderer;
 
             // WebGL
-            renderer.webgl.domElement.style.position = 'absolute';
-            renderer.webgl.domElement.style.zIndex   = 0;
-            renderer.webgl.domElement.style.top      = 0;
+            Object.assign(renderer.webgl.domElement.style, renderer.webgl.domElement.style, domElementStyle);
             renderer.webgl.setSize(width, height);
             renderer.webgl.setClearColor(backgroundColor, backgroundAlpha);
 
             // CSS3D
-            renderer.css3d.domElement.style.position = 'absolute';
-            renderer.css3d.domElement.style.zIndex   = 0;
-            renderer.css3d.domElement.style.top      = 0;
+            Object.assign(renderer.css3d.domElement.style, renderer.css3d.domElement.style, domElementStyle);
             renderer.css3d.setSize(width, height);
 
 
@@ -143,14 +145,18 @@ const COLORS = (rootElement = document.body, properties ) => {
 
 
             let move = (event, touchX) => {
+
                     let { _properties } = self;
+
 
                     _properties.mouseX = (event.clientX - _properties.halfX );
                     touchX && [ _properties.mouseX *= touchX ];
 
+
                     _properties.mouseY = (event.clientY - _properties.halfY) * 0.2;
                 },
                 click = event => {
+
                     let { rootElement, camera, scene } = self,
                         pointer = {
                             x :  (event.clientX / rootElement.clientWidth ) * 2 - 1,
@@ -159,12 +165,12 @@ const COLORS = (rootElement = document.body, properties ) => {
                         raycaster = new THREE.Raycaster(),
                         intersect = null;
 
-                    raycaster.setFromCamera(pointer, camera);
-                    intersect = raycaster.intersectObjects(scene.webgl.children)[0];
 
-                    intersect && window.dispatchEvent(new CustomEvent('raycaster', {
-                        detail : { ...intersect }
-                    }));
+                    raycaster.setFromCamera(pointer, camera);
+                    intersect = raycaster.intersectObjects(scene.webgl.children, true)[0];
+
+
+                    intersect && window.dispatchEvent(new CustomEvent('raycaster', { detail : { ...intersect } }));
 
                 };
 

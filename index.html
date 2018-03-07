@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-	<head>
+    <head>
         <meta charset=utf-8>
         <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
         <title>COLORS</title>
@@ -40,9 +40,9 @@
             .Button_Left { left: 1rem; }
             .Button_Right { right: 1rem; }
 
-		</style>
-	</head>
-	<body>
+        </style>
+    </head>
+    <body>
         <div class="Icon_Button Button_Left"> < </div>
         <div class="Icon_Button Button_Right"> > </div>
 
@@ -73,7 +73,9 @@
                                 },
                                 innerHTML : `<div id="ytplayer_reflection"></div>`
                             }),
-                thumbnails = [];
+                thumbnails = [],
+                light = null,
+                arrow = null;
 
 
 
@@ -81,11 +83,23 @@
 
 
 
-            app.track.add('intro', new TWEEN.Tween(app.camera.position).to( { z : 1100 }, 2000).easing(TWEEN.Easing.Quadratic.Out)
-                                            .onComplete( function() {
-                                                console.log('success', this);
-                                            })
+            app.track.add('intro', new TWEEN.Tween(app.camera.position)
+                                            .to( { z : 1100 }, 3000)
+                                            .easing(TWEEN.Easing.Quadratic.Out)
                                             .delay(3000));
+
+            app.track.add('list', new TWEEN.Tween(app.camera.position)
+                                            .to( { z : -2000 }, 2000)
+                                            .easing(TWEEN.Easing.Quadratic.Out)
+                                            .onStart(_ => app.lookAt.set(0, 100, -2200)));
+
+            app.track.add('back', new TWEEN.Tween(app.camera.position)
+                                            .to( { z : 1100 }, 2000)
+                                            .easing(TWEEN.Easing.Quadratic.Out)
+                                            .onStart(_ => app.lookAt.position.y = 0)
+                                            .chain(new TWEEN.Tween(app.lookAt.position)
+                                                            .to( { z : 0 }, 1000)
+                                                            .easing(TWEEN.Easing.Quadratic.Out)));
 
             app.initialize( e => {
 
@@ -104,6 +118,21 @@
                 app.scene.webgl.add( app.createPlane3D(10, 10, 160, 0x0808080));
                 window.addEventListener('onYoutubeAPIReady', _ => [ thumbnails = app.createThumbnail3D(20, 7, '200px', '200px', 300, 260, -3070, _youtube.items.map(e => e.image), ), thumbnails.forEach(e => app.scene.add(e)) ] );
 
+
+                light = new THREE.AmbientLight(0xffffff);
+                app.scene.webgl.add(light);
+
+
+                new THREE.ObjectLoader().load('media/arrow.json', mesh => {
+                    arrow = mesh;
+
+                    arrow.scale.set(30, 30, 30);
+                    arrow.position.set(1000, 0, 0);
+                    arrow.rotateY( -Math.PI / 2);
+
+                    app.scene.webgl.add(arrow);
+                });
+
             });
 
 
@@ -118,11 +147,13 @@
 
                 if (host.isIntersect(e.detail.object)) [ _youtube.hideAds(), console.log('intersect', e.detail) ]
 
-                thumbnails.filter(v => v.isIntersect(e.detail.object)).forEach(e => _youtube.load(e.dataset.id) );
+                thumbnails.filter(v => v.isIntersect(e.detail.object)).forEach(e => [ _youtube.load(e.dataset.id), app.track.type === 'list' && app.track.start('back')] );
+
+                arrow.children.filter(v => v === e.detail.object).forEach(_ => app.track.type !== 'list' && app.track.start('list'));
 
             });
 
         </script>
         <script src="vendor/youtube.js"></script>
-	</body>
+    </body>
 </html>
