@@ -18,5 +18,6 @@
 > <br>
 > <img width="650" src="media/prototype_7.png">
 
+![anim](media/anim.gif)
 ![demo_0](media/demo_0.png)
 ![demo_1](media/demo_1.png)
