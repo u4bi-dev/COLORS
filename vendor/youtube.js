@@ -12,8 +12,8 @@ var _youtube = {
         accesskey : 'AIzaSyAUEd6XlWygeiKrvgJc4tV7jYRxw7DdaKM',
         channelId : 'UC2Qw1dzXDBAZPwS7zm37g8g',
         playlist : {
-            count : 4,
-            itemCount : 58,
+            count : 3,
+            itemCount : 0,
             data : []
         },
         items : [],
