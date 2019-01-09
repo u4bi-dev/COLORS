@@ -1,5 +1,5 @@
 ## COLORS
-> #### https://myungjaeyu.github.io/COLORS
+> #### https://u4bi-dev.github.io/COLORS
 
 ![colors](media/colors.gif)
 
