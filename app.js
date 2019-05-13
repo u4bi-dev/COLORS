@@ -110,7 +110,14 @@ const COLORS = (rootElement = document.body, properties ) => {
             renderer.webgl.setClearColor(backgroundColor, backgroundAlpha);
 
             // CSS3D
-            Object.assign(renderer.css3d.domElement.style, renderer.css3d.domElement.style, domElementStyle);
+
+            // Object.assign(renderer.css3d.domElement.style, renderer.css3d.domElement.style, domElementStyle);
+            /* Failed to set an indexed property on 'CSSStyleDeclaration': Index property setter is not supported. */
+
+            renderer.css3d.domElement.style.position = domElementStyle.position;
+            renderer.css3d.domElement.style.zIndex = domElementStyle.zIndex;
+            renderer.css3d.domElement.style.top = domElementStyle.top;
+
             renderer.css3d.setSize(width, height);
 
 
